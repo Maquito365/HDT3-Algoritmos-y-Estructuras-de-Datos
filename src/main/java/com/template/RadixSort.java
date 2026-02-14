@@ -2,61 +2,38 @@ package com.template;
 
 public class RadixSort {
 
-	public static void sort(int[] array) {
-		if (array == null || array.length < 2) {
-			return;
-		}
+    public static void sort(Integer[] array) {
+        int max = getMax(array);
 
-		// Separate negatives and non-negatives
-		int negCount = 0;
-		for (int v : array) if (v < 0) negCount++;
+        for (int exp = 1; max / exp > 0; exp *= 10)
+            countingSort(array, exp);
+    }
 
-		int[] neg = new int[negCount];
-		int[] pos = new int[array.length - negCount];
-		int ni = 0, pi = 0;
-		for (int v : array) {
-			if (v < 0) neg[ni++] = -v; // store absolute for sorting
-			else pos[pi++] = v;
-		}
+    private static int getMax(Integer[] array) {
+        int max = array[0];
+        for (int i = 1; i < array.length; i++)
+            if (array[i] > max)
+                max = array[i];
+        return max;
+    }
 
-		if (neg.length > 1) radixSortNonNegative(neg);
-		if (pos.length > 1) radixSortNonNegative(pos);
+    private static void countingSort(Integer[] array, int exp) {
+        int n = array.length;
+        Integer[] output = new Integer[n];
+        int[] count = new int[10];
 
-		// Reassemble: negatives in reverse order (and negated), then positives
-		int idx = 0;
-		for (int i = neg.length - 1; i >= 0; i--) {
-			array[idx++] = -neg[i];
-		}
-		for (int v : pos) {
-			array[idx++] = v;
-		}
-	}
+        for (int i = 0; i < n; i++)
+            count[(array[i] / exp) % 10]++;
 
-	// LSD radix sort for non-negative integers
-	private static void radixSortNonNegative(int[] a) {
-		int max = 0;
-		for (int v : a) if (v > max) max = v;
-		if (max == 0) return;
+        for (int i = 1; i < 10; i++)
+            count[i] += count[i - 1];
 
-		int[] output = new int[a.length];
-		int exp = 1;
-		while (max / exp > 0) {
-			int[] count = new int[10];
-			for (int v : a) {
-				int digit = (v / exp) % 10;
-				count[digit]++;
-			}
+        for (int i = n - 1; i >= 0; i--) {
+            output[count[(array[i] / exp) % 10] - 1] = array[i];
+            count[(array[i] / exp) % 10]--;
+        }
 
-			for (int i = 1; i < 10; i++) count[i] += count[i - 1];
-
-			for (int i = a.length - 1; i >= 0; i--) {
-				int digit = (a[i] / exp) % 10;
-				output[--count[digit]] = a[i];
-			}
-
-			System.arraycopy(output, 0, a, 0, a.length);
-			exp *= 10;
-		}
-	}
-
+        for (int i = 0; i < n; i++)
+            array[i] = output[i];
+    }
 }

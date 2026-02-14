@@ -2,22 +2,17 @@ package com.template;
 
 public class InsertionSort {
 
-	public static void sort(int[] array) {
-		if (array == null || array.length < 2) {
-			return;
-		}
+    public static <T extends Comparable<T>> void sort(T[] array) {
+        for (int i = 1; i < array.length; i++) {
+            T key = array[i];
+            int j = i - 1;
 
-		for (int i = 1; i < array.length; i++) {
-			int key = array[i];
-			int j = i - 1;
+            while (j >= 0 && array[j].compareTo(key) > 0) {
+                array[j + 1] = array[j];
+                j--;
+            }
 
-			while (j >= 0 && array[j] > key) {
-				array[j + 1] = array[j];
-				j--;
-			}
-
-			array[j + 1] = key;
-		}
-	}
-
+            array[j + 1] = key;
+        }
+    }
 }
