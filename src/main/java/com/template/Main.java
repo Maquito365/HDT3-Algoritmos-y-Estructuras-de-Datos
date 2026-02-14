@@ -1,46 +1,64 @@
 package com.template;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class Main {
-    private static final int ARRAY_SIZE = 100000;
-    private static final int ITERATIONS = 1000;
-    
-    public static void main(String[] args) {
-        System.out.println("Starting profiling demo application...");
-        System.out.println("JDK Version: " + System.getProperty("java.version"));
-        
-        performBubbleSort();
-        
-        System.out.println("Application completed successfully.");
-    }
-    
-    private static void performBubbleSort() {
-        System.out.println("Performing bubble sort...");
-        Random random = new Random();
-        int[] array = new int[ARRAY_SIZE / 10];
-        
-        for (int i = 0; i < array.length; i++) {
-            array[i] = random.nextInt(1000);
+
+    public static void main(String[] args) throws IOException {
+
+        String nombreArchivo = "numeros.txt";
+
+        int[] tamanos = {10, 100, 500, 1000, 2000, 3000};
+
+        for (int tamano : tamanos) {
+
+            System.out.println("\n===============================");
+            System.out.println("Tamaño del arreglo: " + tamano);
+            System.out.println("===============================");
+
+            // 1️⃣ Generar archivo con números aleatorios
+            FileManager.generateFile(nombreArchivo, tamano);
+
+            // 2️⃣ Leer datos desde archivo
+            Integer[] datos = FileManager.readFile(nombreArchivo);
+
+            // 3️⃣ Ejecutar con datos desordenados
+            System.out.println("---- Datos DESORDENADOS ----");
+            ejecutarOrdenamientos(datos);
+
+            // 4️⃣ Ejecutar con datos ya ordenados (mejor caso)
+            Arrays.sort(datos);
+            System.out.println("---- Datos ORDENADOS ----");
+            ejecutarOrdenamientos(datos);
         }
-        
-        for (int i = 0; i < array.length - 1; i++) {
-            for (int j = 0; j < array.length - i - 1; j++) {
-                if (array[j] > array[j + 1]) {
-                    swap(array, j, j+1);
-                }
-            }
-        }
-        
-        System.out.println("Bubble sort completed.");
     }
 
-    private static void swap(int[] array, int i, int j) {
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp; 
-    }
+    private static void ejecutarOrdenamientos(Integer[] datosOriginales) {
 
+        // QuickSort
+        final Integer[] copiaQuick = Arrays.copyOf(datosOriginales, datosOriginales.length);
+        long tiempoQuick = MedidorTiempo.medir(() -> QuickSort.sort(copiaQuick));
+        System.out.println("QuickSort: " + tiempoQuick + " ns");
+
+        // MergeSort
+        final Integer[] copiaMerge = Arrays.copyOf(datosOriginales, datosOriginales.length);
+        long tiempoMerge = MedidorTiempo.medir(() -> MergeSort.sort(copiaMerge));
+        System.out.println("MergeSort: " + tiempoMerge + " ns");
+
+        // GnomeSort
+        final Integer[] copiaGnome = Arrays.copyOf(datosOriginales, datosOriginales.length);
+        long tiempoGnome = MedidorTiempo.medir(() -> GnomeSort.sort(copiaGnome));
+        System.out.println("GnomeSort: " + tiempoGnome + " ns");
+
+        // InsertionSort
+        final Integer[] copiaInsertion = Arrays.copyOf(datosOriginales, datosOriginales.length);
+        long tiempoInsertion = MedidorTiempo.medir(() -> InsertionSort.sort(copiaInsertion));
+        System.out.println("InsertionSort: " + tiempoInsertion + " ns");
+
+        // RadixSort
+        final Integer[] copiaRadix = Arrays.copyOf(datosOriginales, datosOriginales.length);
+        long tiempoRadix = MedidorTiempo.medir(() -> RadixSort.sort(copiaRadix));
+        System.out.println("RadixSort: " + tiempoRadix + " ns");
+    }
 }
