@@ -15,16 +15,22 @@ public class FileManager {
         }
     }
 
-    public static Integer[] readFile(String filename) throws IOException{ //lee un archivo y devuelve un array de Integer con los números leídos
-        List<Integer> list = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) { //se crea un BufferedReader para leer el archivo
-            String line;
-            while ((line = reader.readLine()) != null) { //
-                list.add(Integer.parseInt(line));
-            }
-            reader.close();
-            return list.toArray(new Integer[0]);
+    public static Integer[] readFile(String filename) throws IOException {
+    List<Integer> list = new ArrayList<>();
+    BufferedReader reader = new BufferedReader(new FileReader(filename));
+    String line;
+
+    while ((line = reader.readLine()) != null) {
+
+        line = line.trim(); // elimina espacios
+
+        if (!line.isEmpty()) {  // evita líneas vacías
+            list.add(Integer.parseInt(line));
         }
-        
     }
+
+    reader.close();
+    return list.toArray(new Integer[0]);
+}
+
 }
