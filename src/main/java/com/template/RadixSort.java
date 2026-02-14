@@ -1,4 +1,4 @@
-package com.template.sorts;
+package com.template;
 
 public class RadixSort {
 
